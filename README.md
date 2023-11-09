@@ -48,7 +48,7 @@ This project creates a AWS Redshift Cluster using the IaC.ipynb file. With the e
 
 Sparkify analytics database  schema has a star design. Start design means that it has one Fact Table having business data and it is where the events data are stored, and  Dimension Tables (Users, Songs, Time, Artist).
 
-![SparkifyDB schema as ER Diagram](./StartDataModel.png)
+![SparkifyDB schema](./StartDataModel.png)
 
 _*SparkifyDB schema Diagram.*_
 
