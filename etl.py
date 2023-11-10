@@ -3,27 +3,30 @@ import psycopg2
 from sql_queries import copy_table_queries, insert_table_queries
 
 
-"""
-    Description:
-      Load input data (log_data and song_data in JSON format) from S3
-      into staging_events and staging_songs tables.
 
-    Function Arguments:
-      cur --    cursor to execute the queries.
-      conn --   connection reference (host, dbname, user, password, port)
-                used to enable the commit after the queries execution
-
-    Output:
-      song_data inserted in staging_songs table.
-      log_data inserted in staging_events table.
-      
-"""
 def load_staging_tables(cur, conn):
+    """
+        Description:
+          Load input data (log_data and song_data in JSON format) from S3
+          into staging_events and staging_songs tables.
+
+        Function Arguments:
+          cur --    cursor to execute the queries.
+          conn --   connection reference (host, dbname, user, password, port)
+                    used to enable the commit after the queries execution
+
+        Output:
+          song_data inserted in staging_songs table.
+          log_data inserted in staging_events table.
+          
+    """
     for query in copy_table_queries:
         cur.execute(query)
         conn.commit()
 
-"""
+
+def insert_tables(cur, conn):
+    """
     Description:
       Insert data from staging tables into the analytics tables (star model)
       Analytics Tables:
@@ -44,13 +47,14 @@ def load_staging_tables(cur, conn):
       data inserted  into songs table.
       data inserted  into artists table.
       data inserted and tranformed into time table.
-"""
-def insert_tables(cur, conn):
+    """
     for query in insert_table_queries:
         cur.execute(query)
         conn.commit()
 
-"""
+
+def main():
+    """
     Description:
       main function
       - Read the cfg file, load the environment variables
@@ -62,8 +66,7 @@ def insert_tables(cur, conn):
 
     Output:
       All data processed and loaded into tables
-"""
-def main():
+    """
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 

@@ -73,9 +73,9 @@ songplay_table_create = ("""
         session_id varchar(50)  NOT NULL,
         location varchar(255)  NULL,
         user_agent varchar(500)  NULL,
-        user_id int  NOT NULL,
-        artist_id varchar(100)  NOT NULL,
-        song_id varchar(50)  NOT NULL,
+        user_id int  NULL,
+        artist_id varchar(100) NULL,
+        song_id varchar(50)  NULL,
         CONSTRAINT songplay_id PRIMARY KEY (songplay_id)
     )  DISTSTYLE KEY DISTKEY (user_id) COMPOUND SORTKEY (user_id, start_time, song_id);
 """)
@@ -192,15 +192,17 @@ songplay_table_insert = ("""
         user_id,
         artist_id, 
         song_id)
-    select DISTINCT timestamp 'epoch' + evs.ts/1000 * interval '1 second' as start_time,
-        evs.level AS level,
-        evs.sessionid AS session_id,
-        evs.location AS location,
-        evs.useragent AS user_agent,
-        evs.userid AS user_id,
-        ss.artist_id AS artist_id,
-        ss.song_id AS song_id
-    from staging_events as evs, staging_songs as ss where evs.song = ss.title and evs.page = 'NextSong'
+    select distinct timestamp 'epoch' + evs.ts/1000 * interval '1 second' as start_time,
+        evs.level as level,
+        evs.sessionid as session_id,
+        evs.location as location,
+        evs.useragent as user_agent,
+        evs.userid as user_id,
+        ss.artist_id as artist_id,
+        ss.song_id as song_id
+    from staging_events as evs
+    left join staging_songs as ss on evs.song = ss.title 
+    where evs.page = 'NextSong'
 """)
 
 #and evs.artist = ss.artist_name    evs.song = ss.title
